@@ -1,0 +1,206 @@
+{
+    "title": "Magic: The Gathering Sets",
+    "description": "Magic: The Gathering first 50 sets in order of release date (oldest first).",
+    "items": [
+        {
+            "name": "Limited Edition Alpha",
+            "order": 1
+        },
+        {
+            "name": "Limited Edition Beta",
+            "order": 2
+        },
+        {
+            "name": "Arabian Nights",
+            "order": 3
+        },
+        {
+            "name": "Antiquities",
+            "order": 4
+        },
+        {
+            "name": "Legends",
+            "order": 5
+        },
+        {
+            "name": "The Dark",
+            "order": 6
+        },
+        {
+            "name": "Fallen Empires",
+            "order": 7
+        },
+        {
+            "name": "Ice Age",
+            "order": 8
+        },
+        {
+            "name": "Homelands",
+            "order": 9
+        },
+        {
+            "name": "Alliances",
+            "order": 10
+        },
+        {
+            "name": "Mirage",
+            "order": 11
+        },
+        {
+            "name": "Visions",
+            "order": 12
+        },
+        {
+            "name": "Weatherlight",
+            "order": 13
+        },
+        {
+            "name": "Tempest",
+            "order": 14
+        },
+        {
+            "name": "Stronghold",
+            "order": 15
+        },
+        {
+            "name": "Exodus",
+            "order": 16
+        },
+        {
+            "name": "Urza's Saga",
+            "order": 17
+        },
+        {
+            "name": "Urza's Legacy",
+            "order": 18
+        },
+        {
+            "name": "Urza's Destiny",
+            "order": 19
+        },
+        {
+            "name": "Mercadian Masques",
+            "order": 20
+        },
+        {
+            "name": "Nemesis",
+            "order": 21
+        },
+        {
+            "name": "Prophecy",
+            "order": 22
+        },
+        {
+            "name": "Invasion",
+            "order": 23
+        },
+        {
+            "name": "Planeshift",
+            "order": 24
+        },
+        {
+            "name": "Apocalypse",
+            "order": 25
+        },
+        {
+            "name": "Odyssey",
+            "order": 26
+        },
+        {
+            "name": "Torment",
+            "order": 27
+        },
+        {
+            "name": "Judgment",
+            "order": 28
+        },
+        {
+            "name": "Onslaught",
+            "order": 29
+        },
+        {
+            "name": "Legions",
+            "order": 30
+        },
+        {
+            "name": "Scourge",
+            "order": 31
+        },
+        {
+            "name": "Mirrodin",
+            "order": 32
+        },
+        {
+            "name": "Darksteel",
+            "order": 33
+        },
+        {
+            "name": "Fifth Dawn",
+            "order": 34
+        },
+        {
+            "name": "Champions of Kamigawa",
+            "order": 35
+        },
+        {
+            "name": "Betrayers of Kamigawa",
+            "order": 36
+        },
+        {
+            "name": "Saviors of Kamigawa",
+            "order": 37
+        },
+        {
+            "name": "Ravnica: City of Guilds",
+            "order": 38
+        },
+        {
+            "name": "Guildpact",
+            "order": 39
+        },
+        {
+            "name": "Dissension",
+            "order": 40
+        },
+        {
+            "name": "Coldsnap",
+            "order": 41
+        },
+        {
+            "name": "Time Spiral",
+            "order": 42
+        },
+        {
+            "name": "Planar Chaos",
+            "order": 43
+        },
+        {
+            "name": "Future Sight",
+            "order": 44
+        },
+        {
+            "name": "Lorwyn",
+            "order": 45
+        },
+        {
+            "name": "Morningtide",
+            "order": 46
+        },
+        {
+            "name": "Shadowmoor",
+            "order": 47
+        },
+        {
+            "name": "Eventide",
+            "order": 48
+        },
+        {
+            "name": "Shards of Alara",
+            "order": 49
+        },
+        {
+            "name": "Conflux",
+            "order": 50
+        }
+    ]
+}
