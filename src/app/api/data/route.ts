@@ -32,5 +32,5 @@ export async function GET(request: Request) {
         const content = await fs.readFile(filePath, 'utf-8')
         allData[file.replace('.json', '')] = JSON.parse(content)
     }
-    return Response.json(allData)
+    return Response.json({datasets: allData})
 }
