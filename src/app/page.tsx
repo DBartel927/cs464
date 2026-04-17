@@ -1,71 +1,30 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import {
-  Box, Typography, Card, CardContent, Stack,
+  Box, Typography, Card, CardContent,
   Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
+import { Reorder } from 'motion/react';
 
 // sample data
 import birds from '../../data/bird_population.json';
 import fish from '../../data/fish.json';
 import planets from '../../data/planets.json';
 
-import { DataFile } from '@/types/data';
-
-function shuffle<T>(arr: T[]): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
+import { DatasetResponse, DatasetItem } from '@/types/data';
 
 export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const datasets: DataFile[] = [birds, fish, planets];
+  const datasets: DatasetResponse[] = [birds, fish, planets]
+  const { title, description, items } = datasets[selectedIndex];
 
+  const [shuffledItems, setShuffledItems] = useState<DatasetItem[]>([]);
 
-
-  const [items, setItems] = useState(datasets[0].items);
   useEffect(() => {
-    setItems(shuffle(datasets[0].items));
-  }, []);
-
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-
-  const handleDatasetChange = (index: number) => {
-    setSelectedIndex(index);
-
-    setItems(datasets[index].items);
-
-    setTimeout(() => {
-      setItems(shuffle(datasets[index].items));
-    }, 0);
-  };
-
-  const handleDragStart = (index: number) => {
-    setDragIndex(index);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (index: number) => {
-    if (dragIndex === null || dragIndex === index) return;
-
-    const updated = [...items];
-    const [moved] = updated.splice(dragIndex, 1);
-    updated.splice(index, 0, moved);
-
-    setItems(updated);
-    setDragIndex(null);
-  };
-
-  const { title, description } = datasets[selectedIndex];
+    const shuffled = [...items].sort(() => Math.random() - 0.5);
+    setShuffledItems(shuffled);
+  }, [items]);
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, px: 2 }}>
@@ -90,35 +49,29 @@ export default function Home() {
         {description}
       </Typography>
 
-      {/* Draggable list */}
-      <Stack spacing={1}>
-        {items.map((item, index) => (
-          <Card
+      {/* Item cards */}
+      <Reorder.Group
+        as="div"
+        values={shuffledItems}
+        onReorder={setShuffledItems}
+        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+      >
+        {shuffledItems.map((item) => (
+          <Reorder.Item
             key={item.name}
-            variant="outlined"
-            draggable
-            onDragStart={() => handleDragStart(index)}
-            onDragOver={handleDragOver}
-            onDrop={() => handleDrop(index)}
-            sx={{
-              opacity: dragIndex === index ? 0.4 : 1,
-              cursor: 'grab'
-            }}
+            value={item}
+            as="div"
+            style={{ position: 'relative' }}
           >
-            <CardContent
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                py: '12px !important'
-              }}
-            >
-              <DragHandleIcon color="action" />
-              <Typography variant="body1">{item.name}</Typography>
-            </CardContent>
-          </Card>
+            <Card variant="outlined">
+              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: '12px !important' }}>
+                <DragHandleIcon color="action" />
+                <Typography variant="body1">{item.name}</Typography>
+              </CardContent>
+            </Card>
+          </Reorder.Item>
         ))}
-      </Stack>
+      </Reorder.Group>
     </Box>
   );
 }
