@@ -11,11 +11,11 @@ import birds from '../../data/bird_population.json';
 import fish from '../../data/fish.json';
 import planets from '../../data/planets.json';
 
-import { DataFile } from '@/types/data';
+import { DatasetResponse } from '@/types/data';
 
 export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const datasets: DataFile[] = [birds, fish, planets]
+  const datasets: DatasetResponse[] = [birds, fish, planets]
   const { title, description, items } = datasets[selectedIndex];
 
   return (

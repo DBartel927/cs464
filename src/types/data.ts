@@ -1,10 +1,20 @@
-export interface DataItem {
-    name: string
-    order: number
+export interface DatasetItem {
+    item_name: string
+    item_order: number
 }
 
-export interface DataFile {
+export interface Dataset {
+    id: number
+    dataset_slug: string
+    title: string
+    description: string | null
+}
+
+export interface DatasetResponse {
     title: string
     description: string
-    items: DataItem[]
+    items: {
+        name: string
+        order: number
+    }[]
 }
