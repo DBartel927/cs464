@@ -36,7 +36,7 @@ export default function Home() {
         <Select
           value={selectedIndex}
           label="Select a dataset"
-          onChange={(e) => handleDatasetChange(Number(e.target.value))}
+          onChange={(e) => setSelectedIndex(Number(e.target.value))}
         >
           {datasets.map((ds, i) => (
             <MenuItem key={i} value={i}>{ds.title}</MenuItem>
@@ -44,10 +44,9 @@ export default function Home() {
         </Select>
       </FormControl>
 
-      {/* Title & description */}
+      {/* Title & description from the JSON */}
       <Typography variant="h4" gutterBottom>{title}</Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        {description}
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>        {description}
       </Typography>
 
       {/* Item cards */}
@@ -77,4 +76,4 @@ export default function Home() {
       </Reorder.Group>
     </Box>
   );
-}
+};
