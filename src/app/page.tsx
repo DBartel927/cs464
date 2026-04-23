@@ -5,27 +5,36 @@ import {
   Select, MenuItem, FormControl, InputLabel
 } from '@mui/material';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Reorder } from 'motion/react';
 
-// sample data
-import birds from '../../data/bird_population.json';
-import fish from '../../data/fish.json';
-import planets from '../../data/planets.json';
-
 import { Dataset, DatasetItem } from '@/types/data';
+import { getItemDirections } from '@/lib/verifyOrder';
 
 export default function Home() {
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const datasets: Dataset[] = [birds, fish, planets]
-  const { title, description, items } = datasets[selectedIndex];
-
   const [shuffledItems, setShuffledItems] = useState<DatasetItem[]>([]);
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
+    fetch('/api/data')
+      .then((res) => res.json())
+      .then((json) => {
+        const loaded: Dataset[] = Object.values(json.datasets);
+        setDatasets(loaded);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (datasets.length === 0) return;
+    const items = datasets[selectedIndex].items;
     const shuffled = [...items].sort(() => Math.random() - 0.5);
     setShuffledItems(shuffled);
-  }, [items]);
+  }, [datasets, selectedIndex]);
+
+  const selected = datasets[selectedIndex];
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, px: 2 }}>
@@ -44,10 +53,15 @@ export default function Home() {
         </Select>
       </FormControl>
 
-      {/* Title & description from the JSON */}
-      <Typography variant="h4" gutterBottom>{title}</Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>        {description}
-      </Typography>
+      {/* Title & description */}
+      {selected && (
+        <>
+          <Typography variant="h4" gutterBottom>{selected.title}</Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            {selected.description}
+          </Typography>
+        </>
+      )}
 
       {/* Item cards */}
       <Reorder.Group
@@ -56,23 +70,28 @@ export default function Home() {
         onReorder={setShuffledItems}
         style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
       >
-        {shuffledItems.map((item) => (
-          <Reorder.Item
-            key={item.name}
-            value={item}
-            as="div"
-            style={{ position: 'relative' }}
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={() => setIsDragging(false)}
-          >
-            <Card variant="outlined" sx={{ cursor: isDragging ? 'grabbing' : 'grab' }}>
-              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: '12px !important' }}>
-                <DragHandleIcon color="action"/>
-                <Typography variant="body1">{item.name}</Typography>
-              </CardContent>
-            </Card>
-          </Reorder.Item>
-        ))}
+        {(() => {
+          const directions = getItemDirections(shuffledItems);
+          return shuffledItems.map((item, index) => (
+            <Reorder.Item
+              key={item.name}
+              value={item}
+              as="div"
+              style={{ position: 'relative' }}
+              onDragStart={() => setIsDragging(true)}
+              onDragEnd={() => setIsDragging(false)}
+            >
+              <Card variant="outlined" sx={{ cursor: isDragging ? 'grabbing' : 'grab' }}>
+                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: '12px !important' }}>
+                  <DragHandleIcon color="action"/>
+                  <Typography variant="body1" sx={{ flex: 1 }}>{item.name}</Typography>
+                  {directions.get(index) === 'up' && <ArrowUpwardIcon color="error" />}
+                  {directions.get(index) === 'down' && <ArrowDownwardIcon color="error" />}
+                </CardContent>
+              </Card>
+            </Reorder.Item>
+          ));
+        })()}
       </Reorder.Group>
     </Box>
   );
