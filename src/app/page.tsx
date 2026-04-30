@@ -3,9 +3,11 @@ import { useState, useEffect } from 'react';
 import {
   Box, Typography, Card, CardContent,
   Select, MenuItem, FormControl, InputLabel,
-  Button, Alert
+  Button, Alert, Chip
 } from '@mui/material';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { Reorder } from 'motion/react';
 
 import { Dataset, DatasetItem, DatasetMeta } from '@/types/data';
@@ -18,6 +20,8 @@ export default function Home() {
   const [shuffledItems, setShuffledItems] = useState<DatasetItem[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [datasetMeta, setDatasetMeta] = useState<DatasetMeta[]>([])
+  const [checked, setChecked] = useState(false);
+  const [hintItemName, setHintItemName] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{
     severity: 'success' | 'info',
     message: string
@@ -34,6 +38,8 @@ export default function Home() {
       const shuffled = [...dataset.items].sort(() => Math.random() - 0.5);
       setShuffledItems(shuffled);
       setFeedback(null);
+      setChecked(false);
+      setHintItemName(null);
     }
 
   }, [dataset]);
@@ -47,11 +53,68 @@ export default function Home() {
 
   }, [selectedIndex, datasetMeta])
 
+  const getItemFeedback = (item: DatasetItem, index: number) => {
+    if (item.order === dataset?.items[index].order) {
+      return 'correct';
+    }
+  const correctIndex = dataset?.items.findIndex((correctItem) => correctItem.order === item.order) ?? -1;
+  if (correctIndex !== -1 && Math.abs(correctIndex - index) === 1) {
+    return 'close';
+  }
+  return 'wrong';
+};
+const getCardColor = (item: DatasetItem, index: number) => {
+  if (!checked) {
+    return {};
+  }
+
+  const result = getItemFeedback(item, index);
+
+  if (result === 'correct') {
+    return {
+      bgcolor: '#e8f5e9',
+      borderColor: '#2e7d32',
+    };
+  }
+  if (result === 'close') {
+    return {
+      bgcolor: '#fffde7',
+      borderColor: '#fbc02d',
+    };
+  }
+  return {
+    bgcolor: '#eeeeee',
+    borderColor: '#9e9e9e',
+    opacity: 0.5,
+  };
+};
+
+const getHintDirection = (item: DatasetItem, index: number) => {
+  const correctIndex = dataset?.items.findIndex((correctItem) => correctItem.order === item.order) ?? -1;
+
+  if (correctIndex === -1 || correctIndex === index) {
+    return null;
+  }
+  return correctIndex < index ? 'up' : 'down';
+};
+
   const handleCheckOrder = () => {
     if (dataset) {
+      setChecked(true);
       const correctCount = shuffledItems.reduce((count, item, index) => {
         return item.order === dataset.items[index].order ? count + 1 : count;
       }, 0);
+
+      const incorrectItems = shuffledItems.filter((item, index) => {
+        return item.order !== dataset.items[index].order;
+      });
+
+      if (incorrectItems.length > 0) {
+        const randomIncorrectItem = incorrectItems[Math.floor(Math.random() * incorrectItems.length)];
+        setHintItemName(randomIncorrectItem.name);
+      } else {
+        setHintItemName(null);
+      }
 
       if (correctCount === dataset.items.length) {
         setFeedback({
@@ -70,6 +133,8 @@ export default function Home() {
   const handleReorder = (newOrder: DatasetItem[]) => {
     setShuffledItems(newOrder);
     setFeedback(null);
+    setChecked(false);
+    setHintItemName(null);
   };
 
   return (
@@ -123,7 +188,11 @@ export default function Home() {
         onReorder={handleReorder}
         style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
       >
-        {shuffledItems.map((item) => (
+        {shuffledItems.map((item, index) => {
+          const hintDirection = getHintDirection(item, index);
+          const showHint = checked && hintItemName === item.name && hintDirection;
+        
+        return (
           <Reorder.Item
             key={item.name}
             value={item}
@@ -132,15 +201,26 @@ export default function Home() {
             onDragStart={() => setIsDragging(true)}
             onDragEnd={() => setIsDragging(false)}
           >
-            <Card variant="outlined" sx={{ cursor: isDragging ? 'grabbing' : 'grab' }}>
+            <Card variant="outlined" sx={{ cursor: isDragging ? 'grabbing' : 'grab', ...getCardColor(item, index), }}>
               <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: '12px !important' }}>
                 <DragHandleIcon color="action" />
-                <Typography variant="body1">{item.name}</Typography>
+                <Typography variant="body1" sx={{ flexGrow: 1 }}>
+                  {item.name}
+                </Typography>
+                {showHint && (
+                  <Chip
+                    icon={hintDirection === 'up' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+                    label={hintDirection === 'up' ? 'Move up' : 'Move down'}
+                    size="small"
+                    color="primary"
+                  />
+                )}
               </CardContent>
             </Card>
           </Reorder.Item>
-        ))}
+        );
+        })}
       </Reorder.Group>
     </Box>
   );
-};
+}
