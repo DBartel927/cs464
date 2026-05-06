@@ -9,6 +9,7 @@ import DragHandleIcon from '@mui/icons-material/DragHandle';
 import { Reorder } from 'motion/react';
 
 import { Dataset, DatasetItem, DatasetMeta } from '@/types/data';
+import Link from 'next/link';
 
 export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -89,6 +90,10 @@ export default function Home() {
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, px: 2 }}>
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <Button variant="outlined" component={Link} href="/add">+ Add Dataset</Button>
+      </Box>
 
       {/* Dropdown */}
       <FormControl fullWidth sx={{ mb: 3 }}>
