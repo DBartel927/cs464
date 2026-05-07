@@ -1,19 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
 import {
-  Box, Card, CardContent,
-  Typography, Button
+  Box, Button
 } from '@mui/material';
-import DragHandleIcon from '@mui/icons-material/DragHandle';
-import { Reorder } from 'motion/react';
 
 import { Dataset, DatasetItem, DatasetMeta } from '@/types/data';
 import DatasetSelector from '@/components/DatasetSelector';
 import DatasetHeader from '@/components/DatasetHeader';
 import FeedbackBox from '@/components/FeedbackBox';
+import SortableItemList from '@/components/SortableItemList';
 import {
-  statusColors,
-  getItemStatus,
   shuffleItems,
   countCorrectItems,
 } from '@/utils/puzzle';
@@ -24,7 +20,6 @@ export default function Home() {
   // const { title, description, items } = datasets[selectedIndex];
 
   const [shuffledItems, setShuffledItems] = useState<DatasetItem[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
   const [datasetMeta, setDatasetMeta] = useState<DatasetMeta[]>([])
   const [feedback, setFeedback] = useState<{
     severity: 'success' | 'info',
@@ -93,38 +88,11 @@ export default function Home() {
 
       <DatasetHeader dataset={dataset} />
 
-      {/* Item cards */}
-      <Reorder.Group
-        as="div"
-        values={shuffledItems}
+      <SortableItemList
+        items={shuffledItems}
+        hasFeedback={feedback !== null}
         onReorder={handleReorder}
-        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
-      >
-        {shuffledItems.map((item) => (
-          <Reorder.Item
-            key={item.order}
-            value={item}
-            as="div"
-            style={{ position: 'relative' }}
-            onDragStart={() => setIsDragging(true)}
-            onDragEnd={() => setIsDragging(false)}
-          >
-            <Card
-              variant="outlined"
-              sx={{
-                cursor: isDragging ? 'grabbing' : 'grab',
-                backgroundColor: statusColors[getItemStatus(item, shuffledItems.indexOf(item), feedback !== null)],
-                transition: 'background-color 0.3s ease',
-              }}
-            >
-              <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2, py: '12px !important' }}>
-                <DragHandleIcon color="action" />
-                <Typography variant="body1">{item.name}</Typography>
-              </CardContent>
-            </Card>
-          </Reorder.Item>
-        ))}
-      </Reorder.Group>
+      />
     </Box>
   );
 };
