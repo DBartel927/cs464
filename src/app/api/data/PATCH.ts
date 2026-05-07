@@ -10,16 +10,13 @@ export async function PATCH(
     const { slug } = params;
     const supabase = getSupabaseClient();
     
-    // 1. Use .partial() so Zod doesn't complain about missing fields
     const PartialData = Data.partial();
     const body = PartialData.parse(await request.json());
 
-    // If the body is empty, return early
     if (Object.keys(body).length === 0) {
       return Response.json({ error: "No update fields provided" }, { status: 400 });
     }
 
-    // 2. Fetch the current dataset ID first (needed for item updates)
     const { data: existingDataset, error: findError } = await supabase
       .from('datasets')
       .select('id')
@@ -32,8 +29,6 @@ export async function PATCH(
 
     const datasetId = existingDataset.id;
 
-    // 3. Update Dataset Fields
-    // We only update fields present in the request body
     const datasetUpdates: any = {
       updated_at: new Date().toISOString(),
     };
@@ -48,15 +43,12 @@ export async function PATCH(
 
     if (updateError) return Response.json({ error: "Update failed" }, { status: 500 });
 
-    // 4. Update Items (only if 'items' was included in the PATCH body)
     if (body.items) {
-      // Validate unique order
       const orderSet = new Set(body.items.map(i => i.order));
       if (orderSet.size !== body.items.length) {
         return Response.json({ error: "Item order values must be unique" }, { status: 400 });
       }
 
-      // Clear existing items and re-insert (Standard sync strategy)
       await supabase.from('dataset_items').delete().eq('dataset_id', datasetId);
       
       const itemsToInsert = body.items.map(item => ({
