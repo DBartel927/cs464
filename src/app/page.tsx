@@ -16,38 +16,34 @@ import {
 
 export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [dataset, setDataset] = useState<Dataset | null>(null)
-  // const { title, description, items } = datasets[selectedIndex];
-
+  const [dataset, setDataset] = useState<Dataset | null>(null);
   const [shuffledItems, setShuffledItems] = useState<DatasetItem[]>([]);
   const [datasetMeta, setDatasetMeta] = useState<DatasetMeta[]>([])
   const [feedback, setFeedback] = useState<{
-    severity: 'success' | 'info',
-    message: string
+    severity: 'success' | 'info';
+    message: string;
   } | null>(null);
 
   useEffect(() => {
-    fetch("/api/titles")
+    fetch('/api/titles')
       .then((r: Response) => r.json())
-      .then((data: DatasetMeta[]) => setDatasetMeta(data))
-  }, [])
+      .then((data: DatasetMeta[]) => setDatasetMeta(data));
+  }, []);
 
   useEffect(() => {
     if (dataset) {
       setShuffledItems(shuffleItems(dataset.items));
       setFeedback(null);
     }
-
   }, [dataset]);
 
   useEffect(() => {
-    if (datasetMeta.length > selectedIndex){
-    fetch(`/api/data?name=${datasetMeta[selectedIndex].dataset_slug}`)
-      .then((r: Response) => r.json())
-      .then((data: Dataset) => setDataset(data))
+    if (datasetMeta.length > selectedIndex) {
+      fetch(`/api/data?name=${datasetMeta[selectedIndex].dataset_slug}`)
+        .then((r: Response) => r.json())
+        .then((data: Dataset) => setDataset(data));
     }
-
-  }, [selectedIndex, datasetMeta])
+  }, [selectedIndex, datasetMeta]);
 
   const handleCheckOrder = () => {
     if (dataset) {
@@ -56,12 +52,12 @@ export default function Home() {
       if (correctCount === dataset.items.length) {
         setFeedback({
           severity: 'success',
-          message: 'Correct! You solved the puzzle.'
+          message: 'Correct! You solved the puzzle.',
         });
       } else {
         setFeedback({
           severity: 'info',
-          message: `${correctCount} of ${dataset.items.length} items are in the correct position.`
+          message: `${correctCount} of ${dataset.items.length} items are in the correct position.`,
         });
       }
     }
@@ -95,4 +91,4 @@ export default function Home() {
       />
     </Box>
   );
-};
+}
