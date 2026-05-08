@@ -8,11 +8,12 @@ interface DatasetPickerProps {
 }
 
 export default function DatasetPicker({ selectedIndex, datasetMeta, onSelect }: DatasetPickerProps) {
+  const value = datasetMeta.length > 0 ? selectedIndex : '';
   return (
     <FormControl fullWidth sx={{ mb: 3 }}>
       <InputLabel>Select a dataset</InputLabel>
       <Select
-        value={selectedIndex}
+        value={value}
         label="Select a dataset"
         onChange={(e) => onSelect(Number(e.target.value))}
       >
