@@ -7,7 +7,7 @@ import FeedbackAlert from '@/components/FeedbackAlert';
 import DatasetHeader from '@/components/DatasetHeader';
 import DraggableDatasetItems from '@/components/DraggableDatasetItems';
 
-export default function Home() {
+export default function Home({ forcedSlug }: { forcedSlug?: string }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [dataset, setDataset] = useState<Dataset | null>(null);
   const [shuffledItems, setShuffledItems] = useState<DatasetItem[]>([]);
@@ -26,10 +26,22 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetch('/api/titles')
-      .then((r: Response) => r.json())
-      .then((data: DatasetMeta[]) => setDatasetMeta(data));
-  }, []);
+    if (!forcedSlug) {
+      fetch('/api/titles')
+        .then((r: Response) => r.json())
+        .then((data: DatasetMeta[]) => setDatasetMeta(data));
+    }
+  }, [forcedSlug]);
+
+  const selectedSlug = forcedSlug ?? datasetMeta[selectedIndex]?.dataset_slug;
+
+  useEffect(() => {
+    if (selectedSlug) {
+      fetch(`/api/data?name=${selectedSlug}`)
+        .then((r: Response) => r.json())
+        .then((data: Dataset) => setDataset(data));
+    }
+  }, [selectedSlug]);
 
   useEffect(() => {
     if (dataset) {
@@ -38,14 +50,6 @@ export default function Home() {
       setFeedback(null);
     }
   }, [dataset]);
-
-  useEffect(() => {
-    if (datasetMeta.length > selectedIndex) {
-      fetch(`/api/data?name=${datasetMeta[selectedIndex].dataset_slug}`)
-        .then((r: Response) => r.json())
-        .then((data: Dataset) => setDataset(data));
-    }
-  }, [selectedIndex, datasetMeta]);
 
   const handleCheckOrder = () => {
     if (dataset) {
@@ -74,11 +78,13 @@ export default function Home() {
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, px: 2 }}>
-      <DatasetPicker
-        selectedIndex={selectedIndex}
-        datasetMeta={datasetMeta}
-        onSelect={setSelectedIndex}
-      />
+      {!forcedSlug && (
+        <DatasetPicker
+          selectedIndex={selectedIndex}
+          datasetMeta={datasetMeta}
+          onSelect={setSelectedIndex}
+        />
+      )}
 
       <Button variant="contained" onClick={handleCheckOrder} sx={{ mb: 2 }}>
         Check Order
