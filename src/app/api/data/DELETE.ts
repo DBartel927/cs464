@@ -16,14 +16,14 @@ export async function DELETE(
       .select();
 
     if (error) {
-      return Resposne.json({ status: 500 }, { error: error.message })
+      return Response.json({ error: error.message }, { status: 500 })
     }
 
     if (!data || data.length === 0) {
       return { status: 404, message: `Dataset with slug ${slug} not found.`}
     }
 
-    return Response.json({ status: 200 }, { message: "Successfully deleted" }, { deletedItem: data[0] })
+    return Response.json({ message: "Successfully deleted", deletedItem: data[0]}, { status: 200 })
   }
   return Response.json({ message: "No slug provided" }, { status: 400 })
 }
