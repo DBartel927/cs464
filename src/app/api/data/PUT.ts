@@ -8,12 +8,11 @@ export async function PUT(
     const { searchParams } = new URL(request.url)
     const slug = searchParams.get('slug')
     const supabase = getSupabaseClient();
+    const body = await request.json();
     const orderSet = new Set(body.items.map(i => i.order));
-    
     if (orderSet.size !== body.items.length) {
       return Response.json({ error: "Item order values must be unique" }, { status: 400 });
     }
-
     const { data: dataset, error: updateError } = await supabase
       .from('datasets')
       .update({
@@ -24,10 +23,8 @@ export async function PUT(
       })
       .eq('dataset_slug', slug)
       .select('id')
-      .single();
-
+      .maybeSingle();
     if (updateError) return Response.json({ error: updateError.message }, { status: 500 });
-
     const datasetId = dataset.id;
 
     await supabase.from('dataset_items').delete().eq('dataset_id', datasetId);

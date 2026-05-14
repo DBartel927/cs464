@@ -23,7 +23,7 @@ export async function DELETE(
       return { status: 404, message: `Dataset with slug ${slug} not found.`}
     }
 
-    return Response.json({ status: 200 }, { message: Successfully deleted", deletedItem: data[0] })
+    return Response.json({ status: 200 }, { message: "Successfully deleted" }, { deletedItem: data[0] })
   }
   return Response.json({ message: "No slug provided" }, { status: 400 })
 }
