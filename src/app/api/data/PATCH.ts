@@ -2,6 +2,16 @@ import * as z from "zod";
 import { getSupabaseClient } from "@/lib/supabase";
 import { NextRequest } from "next/server";
 
+const Data = z.object({
+  slug: z.string().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  items: z.array(z.object({
+    name: z.string(),
+    order: z.number()
+  })).optional()
+});
+
 export async function PATCH(
   request: NextRequest) {
   try {
@@ -14,7 +24,6 @@ export async function PATCH(
     if (Object.keys(body).length === 0) {
       return Response.json({ error: "No update fields provided" }, { status: 400 });
     }
-
     const { data: existingDataset, error: findError } = await supabase
       .from('datasets')
       .select('id')
@@ -32,7 +41,6 @@ export async function PATCH(
     if (body.slug) datasetUpdates.dataset_slug = body.slug;
     if (body.title) datasetUpdates.title = body.title;
     if (body.description !== undefined) datasetUpdates.description = body.description;
-
     const { error: updateError } = await supabase
       .from('datasets')
       .update(datasetUpdates)
