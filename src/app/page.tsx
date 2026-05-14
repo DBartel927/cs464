@@ -6,6 +6,7 @@ import DatasetPicker from '@/components/DatasetPicker';
 import FeedbackAlert from '@/components/FeedbackAlert';
 import DatasetHeader from '@/components/DatasetHeader';
 import DraggableDatasetItems from '@/components/DraggableDatasetItems';
+import Link from 'next/link';
 
 export default function Home() {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -94,6 +95,9 @@ export default function Home() {
         </Button>
         <Button variant="contained" onClick={handleShuffleData}>
           Shuffle
+        </Button>
+        <Button variant="contained" component={Link} href="/add">
+          Add New Dataset
         </Button>
       </Box>
 
